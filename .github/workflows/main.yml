@@ -1,0 +1,26 @@
+name: Sync Fork
+
+on:
+  schedule:
+    - cron:  '0 0 * * *'  # 每天0点自动同步
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        ref: main  # 你的分支名称
+        fetch-depth: 0  # 在pull之前需要获取完整的历史
+
+    - name: Configure Git
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
+
+    - name: Sync with Upstream
+      run: |
+        git remote add upstream https://github.com/Dooy/chatgpt-web-midjourney-proxy.git        git fetch upstream
+        git merge upstream/main
+        git push
